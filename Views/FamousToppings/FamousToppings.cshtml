@@ -1,0 +1,46 @@
+﻿@model List<PizzaOrdering_Mvc.Models.Pizza>
+@{
+    var pizzaToppings = TempData["PizzaToppings"] as Dictionary<Guid, List<string>>;
+    Dictionary<string, int> toppingCounts = new Dictionary<string, int>();
+    Dictionary<string, double> toppingPercentage = new Dictionary<string, double>();
+    int totalOrders = Model.Count;
+
+    foreach (var order in Model)
+    {
+        foreach (var topping in pizzaToppings[order.PizzaId])
+        {
+            if (toppingCounts.ContainsKey(topping))
+            {
+                toppingCounts[topping]++;
+            }
+            else
+            {
+                toppingCounts[topping] = 1;
+            }
+        }
+    }
+    foreach (var topping in toppingCounts)
+    {
+        toppingPercentage[topping.Key] = (double)topping.Value / totalOrders * 100;
+    }
+}
+
+<h2>Pizza Order Counts</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Toppings</th>
+            <th>Percentage</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var topping in toppingPercentage.OrderByDescending(v => v.Value))
+        {
+            <tr>
+                <td>@topping.Key</td>
+                <td>@topping.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
