@@ -26,7 +26,7 @@ namespace PizzaOrdering_Mvc.Controllers
             }
             catch (Exception e)
             {
-                return View("Home", "Index");
+                return RedirectToAction("Index", "Home");
             }
 
         }
@@ -62,7 +62,7 @@ namespace PizzaOrdering_Mvc.Controllers
             }
             catch (Exception e)
             {
-                return View("Home", "Index");
+                return RedirectToAction("Index", "Home");
             }
 
         }

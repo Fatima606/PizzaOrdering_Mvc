@@ -1,0 +1,59 @@
+﻿@model PizzaOrdering_Mvc.Models.Pizza
+@{
+    var Pizzas = ViewBag.Pizzas as List<PizzaOrdering_Mvc.Models.Pizza>;
+    var pizzaToppings = TempData["PizzaToppings"] as Dictionary<Guid, List<string>>;
+
+}
+@{
+    Dictionary<string, int> pizzaCounts = new Dictionary<string, int>();
+
+
+    foreach (var pizza in Pizzas)
+    {
+        var pizzaKey = $"{pizza.Size.PizzaSize}-{pizza._base.BaseName}-[{string.Join(",", pizzaToppings[pizza.PizzaId])}]";
+        if (pizzaCounts.ContainsKey(pizzaKey))
+        {
+            pizzaCounts[pizzaKey]++;
+        }
+        else
+        {
+            pizzaCounts[pizzaKey] = 1;
+        }
+    }
+}
+
+<p>TOTAL PIZZAS ORDERED : @ViewBag.TotalPizzasOrdered</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Pizza Size</th>
+            <th>Pizza Base</th>
+            <th>Toppings</th>
+            <th>Times ordered</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pizza in pizzaCounts)
+        {
+            var pizzaDetails = pizza.Key.Split('-');
+
+            <tr>
+                <td>@pizzaDetails[0]</td>
+                <td>@pizzaDetails[1]</td>
+                <td>
+                    <ul>
+                        @foreach (var topping in pizzaDetails[2].Trim('[', ']').Split(","))
+                        {
+                            <li>@topping</li>
+                        }
+                    </ul>
+                </td>
+                <td>@pizza.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
