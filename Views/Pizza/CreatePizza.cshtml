@@ -5,18 +5,18 @@
 <form asp-action="CreatePizza" method="post" onsubmit="return validateForm()">
     <div>
         <label>Select Size</label>
-        @Html.DropDownList("SizeId",new SelectList(ViewBag.sizes,"SizeId","PizzaSize"))
+        @Html.DropDownList("SizeId",new SelectList(ViewBag.Sizes,"SizeId","PizzaSize"))
     </div>
     <br />
     <div>
         <label>Select Base</label>
-        @Html.DropDownList("BaseId",new SelectList(ViewBag.bases,"baseId","BaseName"))
+        @Html.DropDownList("BaseId",new SelectList(ViewBag.Bases,"baseId","BaseName"))
     </div>
     <br />
     <div>
         <label>Select 3 Toppings</label>
         <br />
-        @foreach (var topping in ViewBag.toppings)
+        @foreach (var topping in ViewBag.Toppings)
         {
             <div class="form-check">
                 <input type="checkbox" class="topping-checkbox" name="ToppingIds" value="@topping.ToppingId"

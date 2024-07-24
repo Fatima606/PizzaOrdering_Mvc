@@ -41,7 +41,8 @@ namespace PizzaOrdering_Mvc.Controllers
             }
             catch (Exception e)
             {
-                return RedirectToAction("Index", "Home");
+                ViewBag.ErrorMessage = "No Orders found.";
+                return View();
             }
 
         }
