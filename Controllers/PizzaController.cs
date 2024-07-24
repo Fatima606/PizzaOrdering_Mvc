@@ -7,26 +7,26 @@ namespace PizzaOrdering_Mvc.Controllers
 {
     public class PizzaController : Controller
     {
-        private readonly PizzaAppDbContext _pizzaLoading;
-        public PizzaController(PizzaAppDbContext pizzaLoading)
+        private readonly PizzaAppDbContext _pizzaAppDbContext;
+        public PizzaController(PizzaAppDbContext pizzaAppDbContext)
         {
-            _pizzaLoading = pizzaLoading;
+            _pizzaAppDbContext = pizzaAppDbContext;
         }
         [HttpGet]
         public IActionResult CreatePizza()
         {
             try
             {
-                ViewBag.bases = _pizzaLoading.Base.ToList();
-                ViewBag.toppings = _pizzaLoading.Toppings.ToList();
-                ViewBag.sizes = _pizzaLoading.Size.ToList();
-                var pizzaDetails = new PizzaViewModel();
+                ViewBag.Bases = _pizzaAppDbContext.Base.ToList();
+                ViewBag.Toppings = _pizzaAppDbContext.Toppings.ToList();
+                ViewBag.Sizes = _pizzaAppDbContext.Size.ToList();
 
-                return View(pizzaDetails);
+                return View();
             }
             catch (Exception e)
             {
-                return View("Home", "Index");
+                ViewBag.ErrorMessage = "No functionality to create Pizza was found.";
+                return View();
             }
 
         }
@@ -40,8 +40,9 @@ namespace PizzaOrdering_Mvc.Controllers
                     BaseId = model.BaseId,
                     SizeId = model.SizeId
                 };
-                _pizzaLoading.Pizza.Add(pizza);
-                _pizzaLoading.SaveChanges();
+                _pizzaAppDbContext.Pizza.Add(pizza);
+                _pizzaAppDbContext.SaveChanges();
+                var toppingsOrders = new List<PizzaTopping>();
                 foreach (var toppingId in model.ToppingIds)
                 {
                     var toppingsOrder = new PizzaTopping
@@ -49,20 +50,22 @@ namespace PizzaOrdering_Mvc.Controllers
                         PizzaId = pizza.PizzaId,
                         ToppingId = toppingId
                     };
-                    _pizzaLoading.PizzaTopping.Add(toppingsOrder);
-                    _pizzaLoading.SaveChanges();
+                    toppingsOrders.Add(toppingsOrder);
                 }
+                _pizzaAppDbContext.PizzaTopping.AddRange(toppingsOrders);
+                _pizzaAppDbContext.SaveChanges();
                 var order = new Order
                 {
                     PizzaId = pizza.PizzaId
                 };
-                _pizzaLoading.Order.Add(order);
-                _pizzaLoading.SaveChanges();
+                _pizzaAppDbContext.Order.Add(order);
+                _pizzaAppDbContext.SaveChanges();
                 return RedirectToAction("CreatePizza");
             }
             catch (Exception e)
             {
-                return View("Home", "Index");
+                ViewBag.ErrorMessage = "Pizza not created.";
+                return View();
             }
 
         }
