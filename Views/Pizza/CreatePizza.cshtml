@@ -1,0 +1,42 @@
+﻿@model PizzaOrdering_Mvc.DTO.PizzaViewModel
+
+<h1>Order Pizza</h1>
+
+<form asp-action="CreatePizza" method="post" onsubmit="return validateForm()">
+    <div>
+        <label>Select Size</label>
+        @Html.DropDownList("SizeId",new SelectList(ViewBag.sizes,"SizeId","PizzaSize"))
+    </div>
+    <br />
+    <div>
+        <label>Select Base</label>
+        @Html.DropDownList("BaseId",new SelectList(ViewBag.bases,"baseId","BaseName"))
+    </div>
+    <br />
+    <div>
+        <label>Select 3 Toppings</label>
+        <br />
+        @foreach (var topping in ViewBag.toppings)
+        {
+            <div class="form-check">
+                <input type="checkbox" class="topping-checkbox" name="ToppingIds" value="@topping.ToppingId"
+                   @(Model.ToppingIds != null && Model.ToppingIds.Contains(topping.ToppingId) ? "checked" : "") />
+                <label>@topping.ToppingName</label>
+            </div>
+        }
+    </div>
+    <br />
+    <button type="submit">Submit</button>
+
+</form>
+
+<script>
+    function validateForm() {
+        const checkboxes = document.querySelectorAll('.topping-checkbox:checked');
+        if (checkboxes.length > 3) {
+            alert('You can select up to 3 toppings only.');
+            return false;
+        }
+        return true;
+    }
+</script>
