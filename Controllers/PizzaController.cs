@@ -21,7 +21,7 @@ namespace PizzaOrdering_Mvc.Controllers
                 ViewBag.Toppings = _pizzaAppDbContext.Toppings.ToList();
                 ViewBag.Sizes = _pizzaAppDbContext.Size.ToList();
 
-                return View();
+                return View(new PizzaViewModel());
             }
             catch (Exception e)
             {
