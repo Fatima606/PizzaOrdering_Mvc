@@ -1,0 +1,23 @@
+﻿@model List<PizzaOrdering_Mvc.DTO.ToppingViewModel>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Topping Name</th>
+            <th>Topping Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var topping in Model)
+        {
+            <tr>
+                <td>@topping.ToppingName</td>
+                <td>@topping.Topping_percentage</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
