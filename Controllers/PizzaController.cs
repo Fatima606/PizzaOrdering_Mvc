@@ -54,12 +54,7 @@ namespace PizzaOrdering_Mvc.Controllers
                 }
                 _pizzaAppDbContext.PizzaTopping.AddRange(toppingsOrders);
                 _pizzaAppDbContext.SaveChanges();
-                var order = new Order
-                {
-                    PizzaId = pizza.PizzaId
-                };
-                _pizzaAppDbContext.Order.Add(order);
-                _pizzaAppDbContext.SaveChanges();
+
                 return RedirectToAction("CreatePizza");
             }
             catch (Exception e)

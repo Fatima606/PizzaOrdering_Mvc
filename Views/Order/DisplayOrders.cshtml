@@ -1,29 +1,13 @@
-﻿@model PizzaOrdering_Mvc.Models.Pizza
+﻿@model List<PizzaOrdering_Mvc.DTO.OrderViewModel>
 @{
-    var Pizzas = ViewBag.Pizzas as List<PizzaOrdering_Mvc.Models.Pizza>;
-    var pizzaToppings = TempData["PizzaToppings"] as Dictionary<Guid, List<string>>;
-
-}
-@{
-    Dictionary<string, int> pizzaCounts = new Dictionary<string, int>();
-
-
-    foreach (var pizza in Pizzas)
+    var total_orders = 0;
+    foreach (var or in Model)
     {
-        var pizzaKey = $"{pizza.Size.PizzaSize}-{pizza._base.BaseName}-[{string.Join(",", pizzaToppings[pizza.PizzaId])}]";
-        if (pizzaCounts.ContainsKey(pizzaKey))
-        {
-            pizzaCounts[pizzaKey]++;
-        }
-        else
-        {
-            pizzaCounts[pizzaKey] = 1;
-        }
+        total_orders += or.no_of_times_ordered;
     }
 }
 
-<p>TOTAL PIZZAS ORDERED : @ViewBag.TotalPizzasOrdered</p>
-
+<p>TOTAL PIZZAS ORDERED : @total_orders</p>
 <table class="table">
     <thead>
         <tr>
@@ -31,25 +15,37 @@
             <th>Pizza Base</th>
             <th>Toppings</th>
             <th>Times ordered</th>
+            <th>Edit Pizza</th>
+            <th>Confirm Order</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var pizza in pizzaCounts)
+        @foreach (var pizza in Model)
         {
-            var pizzaDetails = pizza.Key.Split('-');
-
             <tr>
-                <td>@pizzaDetails[0]</td>
-                <td>@pizzaDetails[1]</td>
+                <td>@pizza.PizzaSize</td>
+                <td>@pizza.PizzaBase</td>
                 <td>
                     <ul>
-                        @foreach (var topping in pizzaDetails[2].Trim('[', ']').Split(","))
+                        @foreach (var topping in pizza.PizzaToppings)
                         {
-                            <li>@topping</li>
+                            <li>@topping.ToppingName</li>
                         }
                     </ul>
                 </td>
-                <td>@pizza.Value</td>
+                <td>@pizza.no_of_times_ordered</td>
+                <td>
+                    <form asp-action="EditOrders" method="get">
+                        <input type="hidden" name="pizzaId" value="@pizza.PizzaId" />
+                        <button type="submit">Edit</button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-action="ConfirmOrders" method="post">
+                        <input type="hidden" name="pizzaId" value="@pizza.PizzaId" />
+                        <button type="submit">Confirm</button>
+                    </form>
+                </td>
             </tr>
         }
     </tbody>

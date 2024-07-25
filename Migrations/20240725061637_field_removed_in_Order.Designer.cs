@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PizzaOrdering_Mvc.PizzaApp_DbContext;
 
@@ -11,9 +12,10 @@ using PizzaOrdering_Mvc.PizzaApp_DbContext;
 namespace PizzaOrdering_Mvc.Migrations
 {
     [DbContext(typeof(PizzaAppDbContext))]
-    partial class PizzaAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240725061637_field_removed_in_Order")]
+    partial class field_removed_in_Order
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

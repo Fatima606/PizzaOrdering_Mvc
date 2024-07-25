@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PizzaOrdering_Mvc.PizzaApp_DbContext;
 
@@ -11,9 +12,10 @@ using PizzaOrdering_Mvc.PizzaApp_DbContext;
 namespace PizzaOrdering_Mvc.Migrations
 {
     [DbContext(typeof(PizzaAppDbContext))]
-    partial class PizzaAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240725060632_field_added_in_Order")]
+    partial class field_added_in_Order
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,12 +41,12 @@ namespace PizzaOrdering_Mvc.Migrations
                     b.HasData(
                         new
                         {
-                            baseId = new Guid("cfe0ec73-0c8a-4653-932b-4189622281a4"),
+                            baseId = new Guid("c153bc56-c45d-4eeb-a4cf-ad34a75cd7d0"),
                             BaseName = "Thick"
                         },
                         new
                         {
-                            baseId = new Guid("4c97f9e8-30c2-4ef3-b152-9600438300c2"),
+                            baseId = new Guid("35232165-19b5-41c3-a904-0ec72be37c88"),
                             BaseName = "Thin"
                         });
                 });
@@ -57,6 +59,9 @@ namespace PizzaOrdering_Mvc.Migrations
 
                     b.Property<Guid>("PizzaId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("no_times_ordered")
+                        .HasColumnType("int");
 
                     b.HasKey("OrderId");
 
@@ -118,17 +123,17 @@ namespace PizzaOrdering_Mvc.Migrations
                     b.HasData(
                         new
                         {
-                            SizeId = new Guid("e75924ba-0967-4b2c-87c7-991b56c65f69"),
+                            SizeId = new Guid("89b392ec-2007-4187-bd1e-b63c6f8d8cfe"),
                             PizzaSize = "Large"
                         },
                         new
                         {
-                            SizeId = new Guid("eb7151bf-1c5d-4c52-b34e-023a52ab9b6f"),
+                            SizeId = new Guid("e78de39d-7f5a-4ba4-90c2-63f2eb9fc9e5"),
                             PizzaSize = "Medium"
                         },
                         new
                         {
-                            SizeId = new Guid("64012bcd-d71a-45f3-aab0-72d1ca386d77"),
+                            SizeId = new Guid("9c85e049-b0ac-4fad-97a7-fdfda3ac1781"),
                             PizzaSize = "Small"
                         });
                 });
@@ -150,32 +155,32 @@ namespace PizzaOrdering_Mvc.Migrations
                     b.HasData(
                         new
                         {
-                            ToppingId = new Guid("5fa3366f-c816-4c89-85a7-cfde8b1047cb"),
+                            ToppingId = new Guid("0a421f62-bd57-4eed-9118-8206a6b67283"),
                             ToppingName = "Chicken"
                         },
                         new
                         {
-                            ToppingId = new Guid("f46673ab-4bbd-4151-9d79-6735416897f5"),
+                            ToppingId = new Guid("6f547df3-b2a7-41a4-9ef5-9efc02c9fe31"),
                             ToppingName = "Pepperoni"
                         },
                         new
                         {
-                            ToppingId = new Guid("c96e7ccd-f2ed-4551-9adf-b450f9edd276"),
+                            ToppingId = new Guid("5a665776-d01b-437c-9a70-9f7dc12df558"),
                             ToppingName = "Extra Chaeese"
                         },
                         new
                         {
-                            ToppingId = new Guid("22b16462-0a68-42dc-bf52-b6c0f1dfd0ae"),
+                            ToppingId = new Guid("dbeb07ad-455a-4fff-a116-cf6df1c1e1bd"),
                             ToppingName = "Mushroom"
                         },
                         new
                         {
-                            ToppingId = new Guid("692df90b-65b0-4a0b-8249-c1eff6c11e76"),
+                            ToppingId = new Guid("40e8d015-76f2-4431-ba65-4db323a36001"),
                             ToppingName = "Spinach"
                         },
                         new
                         {
-                            ToppingId = new Guid("d46eb57f-c9ea-4b49-ab28-c1116974c985"),
+                            ToppingId = new Guid("af84bf79-9d2b-45ca-8b0e-f0f726e483f8"),
                             ToppingName = "Olives"
                         });
                 });

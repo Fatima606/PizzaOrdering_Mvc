@@ -6,7 +6,7 @@ namespace PizzaOrdering_Mvc.Models
     public class Order
     {
         [Key]
-        public Guid OrderId { get; set; }
+        public Guid OrderId { get; set; }   
 
         [ForeignKey("Pizza")]
         public Guid PizzaId { get; set; }
