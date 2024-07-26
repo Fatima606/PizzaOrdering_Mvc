@@ -26,8 +26,8 @@ namespace PizzaOrdering_Mvc.Controllers
                     };
                     toppingList.Add(Pizzatopping);
                 }
-                ViewBag.MaxPercentageToppingName = toppingList.FirstOrDefault(t => t.ToppingCount == toppingList.Max(t => t.ToppingCount)).ToppingName;
-                ViewBag.MinPercentageToppingName = toppingList.FirstOrDefault(t => t.ToppingCount == toppingList.Min(t => t.ToppingCount)).ToppingName;
+                ViewBag.MaxPercentageToppingName = toppingList.FirstOrDefault(topping => topping.ToppingCount == toppingList.Max(topping => topping.ToppingCount)).ToppingName;
+                ViewBag.MinPercentageToppingName = toppingList.FirstOrDefault(topping => topping.ToppingCount == toppingList.Min(topping => topping.ToppingCount)).ToppingName;
 
                 return View();
             }
