@@ -3,6 +3,6 @@
     public class ToppingViewModel
     {
         public string ToppingName { get; set; }
-        public double Topping_percentage { get; set; }  
+        public int ToppingCount { get; set; }  
     }
 }

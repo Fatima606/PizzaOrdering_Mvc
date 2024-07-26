@@ -16,23 +16,19 @@ namespace PizzaOrdering_Mvc.Controllers
         {
             try
             {
-                var Total_orders = _pizzaAppDbContext.Order.Count();
                 var toppings = _pizzaAppDbContext.Toppings.ToList();
-                var top_list = new List<ToppingViewModel>();
-                foreach(var top in toppings)
+                var toppingList = new List<ToppingViewModel>();
+                foreach(var topping in toppings)
                 {
-                    var topping = new ToppingViewModel {
-                        ToppingName = top.ToppingName,
-                        Topping_percentage = ((double)(_pizzaAppDbContext.PizzaTopping.Where(pt => pt.ToppingId == top.ToppingId).Count())/ Total_orders)*100
+                    var Pizzatopping = new ToppingViewModel {
+                        ToppingName = topping.ToppingName,
+                        ToppingCount = _pizzaAppDbContext.PizzaTopping.Where(pizzaToppings => pizzaToppings.ToppingId == topping.ToppingId).Count()
                     };
-                    top_list = top_list.OrderByDescending(t => t.Topping_percentage).ToList();
-                    top_list.Add(topping);
+                    toppingList.Add(Pizzatopping);
                 }
-                var maxPercentageTopping = top_list.FirstOrDefault(t => t.Topping_percentage == top_list.Max(t => t.Topping_percentage));
-                var minPercentageTopping = top_list.FirstOrDefault(t => t.Topping_percentage == top_list.Min(t => t.Topping_percentage));
+                ViewBag.MaxPercentageToppingName = toppingList.FirstOrDefault(t => t.ToppingCount == toppingList.Max(t => t.ToppingCount)).ToppingName;
+                ViewBag.MinPercentageToppingName = toppingList.FirstOrDefault(t => t.ToppingCount == toppingList.Min(t => t.ToppingCount)).ToppingName;
 
-                ViewBag.MaxPercentageToppingName = maxPercentageTopping;
-                ViewBag.MinPercentageToppingName = minPercentageTopping;
                 return View();
             }
             catch (Exception e)
