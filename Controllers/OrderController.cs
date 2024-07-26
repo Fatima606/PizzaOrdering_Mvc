@@ -92,7 +92,10 @@ namespace PizzaOrdering_Mvc.Controllers
                     ViewBag.Sizes = _pizzaAppDbContext.Size.ToList();
                     var orderView = new EditOrderViewModel
                     {
-                        PizzaId = pizzaId
+                        PizzaId = pizzaId,
+                        BaseId = pizza.BaseId,
+                        SizeId = pizza.SizeId,
+                        ToppingIds = _pizzaAppDbContext.PizzaTopping.Where(toppings => toppings.PizzaId == pizza.PizzaId).Select(toppingIds => toppingIds.ToppingId).ToList()
                     };
                     return View(orderView);
                 }
