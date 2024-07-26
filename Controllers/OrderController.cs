@@ -10,6 +10,8 @@ namespace PizzaOrdering_Mvc.Controllers
     public class OrderController : Controller
     {
         private readonly PizzaAppDbContext _pizzaAppDbContext;
+        private readonly static int MaxToppings = 3;
+        private readonly static int MinToppings = 0;
         public OrderController(PizzaAppDbContext pizzaAppDbContext)
         {
             _pizzaAppDbContext = pizzaAppDbContext;
@@ -20,19 +22,19 @@ namespace PizzaOrdering_Mvc.Controllers
             {
 
                 List<OrderViewModel> orders = new List<OrderViewModel>();
-                var pizzas = _pizzaAppDbContext.Pizza.Include(p => p.Size).Include(p => p._base).ToList();
-                foreach (var p in pizzas)
+                var pizzas = _pizzaAppDbContext.Pizza.Include(pizza => pizza.Size).Include(pizza => pizza._base).ToList();
+                foreach (var pizza in pizzas)
                 {
                     var OrderView = new OrderViewModel
                     {
-                        PizzaId = p.PizzaId,
-                        PizzaSize = p.Size.PizzaSize,
-                        PizzaBase = p._base.BaseName,
+                        PizzaId = pizza.PizzaId,
+                        PizzaSize = pizza.Size.PizzaSize,
+                        PizzaBase = pizza._base.BaseName,
                         PizzaToppings = _pizzaAppDbContext.PizzaTopping
-                        .Where(to => to.PizzaId == p.PizzaId)
-                        .Select(to => to.Topping)
+                        .Where(pizzaTopping => pizzaTopping.PizzaId == pizza.PizzaId)
+                        .Select(pizzaTopping => pizzaTopping.Topping)
                         .ToList(),
-                        NoTimesOrdered = _pizzaAppDbContext.Order.Where(to => to.PizzaId == p.PizzaId).Count()
+                        NoTimesOrdered = _pizzaAppDbContext.Order.Where(pizzaTopping => pizzaTopping.PizzaId == pizza.PizzaId).Count()
                     };
 
                     orders.Add(OrderView);
@@ -52,7 +54,7 @@ namespace PizzaOrdering_Mvc.Controllers
         {
             try
             {
-                var pizza = _pizzaAppDbContext.Pizza.FirstOrDefault(p => p.PizzaId == pizzaId);
+                var pizza = _pizzaAppDbContext.Pizza.FirstOrDefault(pizza => pizza.PizzaId == pizzaId);
                 if (pizza != null)
                 {
                     var order = new Order
@@ -82,7 +84,7 @@ namespace PizzaOrdering_Mvc.Controllers
         {
             try
             {
-                var pizza = _pizzaAppDbContext.Pizza.FirstOrDefault(p => p.PizzaId == pizzaId);
+                var pizza = _pizzaAppDbContext.Pizza.FirstOrDefault(pizza => pizza.PizzaId == pizzaId);
                 if (pizza != null)
                 {
                     ViewBag.Bases = _pizzaAppDbContext.Base.ToList();
@@ -96,15 +98,8 @@ namespace PizzaOrdering_Mvc.Controllers
                 }
                 else
                 {
-                    ViewBag.ErrorMessage = "Pizza was not found.";
-                    ViewBag.Bases = _pizzaAppDbContext.Base.ToList();
-                    ViewBag.Toppings = _pizzaAppDbContext.Toppings.ToList();
-                    ViewBag.Sizes = _pizzaAppDbContext.Size.ToList();
-                    var orderView = new EditOrderViewModel
-                    {
-                        PizzaId = pizzaId
-                    };
-                    return View(orderView);
+                    TempData["ErrorMessage"] = "Pizza was not found.";
+                    return RedirectToAction("DisplayOrders");
                 }
                
 
@@ -121,7 +116,7 @@ namespace PizzaOrdering_Mvc.Controllers
         {
             try
             {
-                if (edittedOrder.ToppingIds.Count == 0 || edittedOrder.ToppingIds.Count > 3)
+                if (edittedOrder.ToppingIds.Count == MinToppings || edittedOrder.ToppingIds.Count > MaxToppings)
                 {
                     ViewBag.ErrorMessage = "You can select up to 3 toppings only.";
 
@@ -133,7 +128,7 @@ namespace PizzaOrdering_Mvc.Controllers
                 }
                 else
                 {
-                    var EdittedOrder = _pizzaAppDbContext.Pizza.FirstOrDefault(eo => eo.PizzaId == edittedOrder.PizzaId);
+                    var EdittedOrder = _pizzaAppDbContext.Pizza.FirstOrDefault(orderToEdit => orderToEdit.PizzaId == edittedOrder.PizzaId);
                     if (EdittedOrder != null)
                     {
                         EdittedOrder.SizeId = edittedOrder.SizeId;
@@ -143,14 +138,12 @@ namespace PizzaOrdering_Mvc.Controllers
 
                         var existingToppings = _pizzaAppDbContext.PizzaTopping
                                  .Where(to => to.PizzaId == edittedOrder.PizzaId).ToList();
-                        var sameToppings = existingToppings.Select(to=>to.ToppingId).Intersect(edittedOrder.ToppingIds).ToList();
-                        var ToppingsToRemove = existingToppings.Select(to => to.ToppingId).Except(sameToppings).ToList();
+                        var sameToppings = existingToppings.Select(toppings=> toppings.ToppingId).Intersect(edittedOrder.ToppingIds).ToList();
+                        var ToppingsToRemove = existingToppings.Select(toppings => toppings.ToppingId).Except(sameToppings).ToList();
                         var ToppingsToAdd = edittedOrder.ToppingIds.Except(sameToppings).ToList();
 
 
-                        var toppingsToRemoveEntities = existingToppings.Where(to => ToppingsToRemove.Contains(to.ToppingId)).ToList();
-                        _pizzaAppDbContext.PizzaTopping.RemoveRange(toppingsToRemoveEntities);
-                        _pizzaAppDbContext.SaveChanges();
+                        var toppingsToRemoveEntities = existingToppings.Where(toppings => ToppingsToRemove.Contains(toppings.ToppingId)).ToList();
 
                         var NewToppings = new List<PizzaTopping>();
                         foreach (var toppingId in ToppingsToAdd)
@@ -162,6 +155,7 @@ namespace PizzaOrdering_Mvc.Controllers
                             };
                             NewToppings.Add(toppingsOrder);
                         }
+                        _pizzaAppDbContext.PizzaTopping.RemoveRange(toppingsToRemoveEntities);
                         _pizzaAppDbContext.PizzaTopping.AddRange(NewToppings);
                         _pizzaAppDbContext.SaveChanges();
                         return RedirectToAction("DisplayOrders");
