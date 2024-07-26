@@ -25,7 +25,7 @@ namespace PizzaOrdering_Mvc.Controllers
             }
             catch (Exception e)
             {
-                ViewBag.ErrorMessage = "No functionality to create Pizza was found.";
+                ViewBag.ErrorMessage = "Pizza can not be created due to some error.";
                 return View();
             }
 
@@ -35,6 +35,16 @@ namespace PizzaOrdering_Mvc.Controllers
         {
             try
             {
+                if (model.ToppingIds.Count == 0 || model.ToppingIds.Count > 3)
+                {
+                    ViewBag.ErrorMessage = "You can select up to 3 toppings only.";
+
+                    ViewBag.Bases = _pizzaAppDbContext.Base.ToList();
+                    ViewBag.Toppings = _pizzaAppDbContext.Toppings.ToList();
+                    ViewBag.Sizes = _pizzaAppDbContext.Size.ToList();
+
+                    return View(model);
+                }
                 var pizza = new Pizza
                 {
                     BaseId = model.BaseId,
@@ -64,7 +74,7 @@ namespace PizzaOrdering_Mvc.Controllers
             }
             catch (Exception e)
             {
-                ViewBag.ErrorMessage = "Pizza not created.";
+                ViewBag.ErrorMessage = "Pizza was not created due to some error.";
                 return View();
             }
 
