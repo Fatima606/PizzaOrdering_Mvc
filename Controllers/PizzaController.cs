@@ -8,6 +8,8 @@ namespace PizzaOrdering_Mvc.Controllers
     public class PizzaController : Controller
     {
         private readonly PizzaAppDbContext _pizzaAppDbContext;
+        private readonly static int MaxToppings=3;
+        private readonly static int MinToppings=0;
         public PizzaController(PizzaAppDbContext pizzaAppDbContext)
         {
             _pizzaAppDbContext = pizzaAppDbContext;
@@ -35,7 +37,7 @@ namespace PizzaOrdering_Mvc.Controllers
         {
             try
             {
-                if (model.ToppingIds.Count == 0 || model.ToppingIds.Count > 3)
+                if (model.ToppingIds.Count == MinToppings || model.ToppingIds.Count > MaxToppings)
                 {
                     ViewBag.ErrorMessage = "You can select up to 3 toppings only.";
 
