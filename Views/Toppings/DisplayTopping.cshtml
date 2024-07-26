@@ -1,23 +1,21 @@
-﻿@model List<PizzaOrdering_Mvc.DTO.ToppingViewModel>
-
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Topping Name</th>
-            <th>Topping Rating</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var topping in Model)
-        {
-            <tr>
-                <td>@topping.ToppingName</td>
-                <td>@topping.Topping_percentage</td>
-            </tr>
-        }
-    </tbody>
-</table>
+﻿@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+<div>
+    <div>
+        <h3>Famous Topping : </h3>
+        <label>@ViewBag.MaxPercentageToppingName.ToppingName</label>
+        <label>@ViewBag.MaxPercentageToppingName.Topping_percentage</label>
+    </div>
+    <div>
+        <h3>Least Rated Topping : </h3>
+        <label>@ViewBag.MinPercentageToppingName.ToppingName</label>
+        <label>@ViewBag.MinPercentageToppingName.Topping_percentage</label>
+    </div>
+</div>
 
 
 

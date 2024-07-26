@@ -22,18 +22,22 @@ namespace PizzaOrdering_Mvc.Controllers
                 foreach(var top in toppings)
                 {
                     var topping = new ToppingViewModel {
-                        ToppingId = top.ToppingId,
                         ToppingName = top.ToppingName,
                         Topping_percentage = ((double)(_pizzaAppDbContext.PizzaTopping.Where(pt => pt.ToppingId == top.ToppingId).Count())/ Total_orders)*100
                     };
                     top_list = top_list.OrderByDescending(t => t.Topping_percentage).ToList();
                     top_list.Add(topping);
                 }
-                return View(top_list);
+                var maxPercentageTopping = top_list.FirstOrDefault(t => t.Topping_percentage == top_list.Max(t => t.Topping_percentage));
+                var minPercentageTopping = top_list.FirstOrDefault(t => t.Topping_percentage == top_list.Min(t => t.Topping_percentage));
+
+                ViewBag.MaxPercentageToppingName = maxPercentageTopping;
+                ViewBag.MinPercentageToppingName = minPercentageTopping;
+                return View();
             }
             catch (Exception e)
             {
-                ViewBag.ErrorMessage = "No Orders found.";
+                ViewBag.ErrorMessage = "No Toppings found.";
                 return View();
             }
 
