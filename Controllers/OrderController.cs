@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PizzaOrdering_Mvc.DTO;
 using PizzaOrdering_Mvc.Models;
 using PizzaOrdering_Mvc.PizzaApp_DbContext;
+using PizzaOrdering_Mvc.Utility;
 using System.Linq;
 
 namespace PizzaOrdering_Mvc.Controllers
@@ -119,7 +120,7 @@ namespace PizzaOrdering_Mvc.Controllers
         {
             try
             {
-                if (edittedOrder.ToppingIds.Count == MinToppings || edittedOrder.ToppingIds.Count > MaxToppings)
+                if (edittedOrder.ToppingIds.Count == Constants.MinTopping || edittedOrder.ToppingIds.Count > Constants.MaxTopping)
                 {
                     ViewBag.ErrorMessage = "You can select up to 3 toppings only.";
 
