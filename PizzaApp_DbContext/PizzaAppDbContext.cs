@@ -30,7 +30,7 @@ namespace PizzaOrdering_Mvc.PizzaApp_DbContext
             modelBuilder.Entity<Toppings>().HasData(
                  new Toppings() { ToppingId = Guid.NewGuid(), ToppingName = "Chicken" },
                  new Toppings() { ToppingId = Guid.NewGuid(), ToppingName = "Pepperoni" },
-                 new Toppings() { ToppingId = Guid.NewGuid(), ToppingName = "Extra Chaeese" },
+                 new Toppings() { ToppingId = Guid.NewGuid(), ToppingName = "Extra Cheese" },
                  new Toppings() { ToppingId = Guid.NewGuid(), ToppingName = "Mushroom" },
                  new Toppings() { ToppingId = Guid.NewGuid(), ToppingName = "Spinach" },
                  new Toppings() { ToppingId = Guid.NewGuid(), ToppingName = "Olives" }

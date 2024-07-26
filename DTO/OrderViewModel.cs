@@ -8,6 +8,6 @@ namespace PizzaOrdering_Mvc.DTO
         public string PizzaSize { get; set; }
         public string PizzaBase { get; set; }
         public List<Toppings> PizzaToppings { get; set; }
-        public int no_of_times_ordered { get; set; }
+        public int NoTimesOrdered { get; set; }
     }
 }

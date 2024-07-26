@@ -2,6 +2,13 @@
 
 <h1>Order Pizza</h1>
 
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
 <form asp-action="CreatePizza" method="post" onsubmit="return validateForm()">
     <div>
         <label>Select Size</label>
@@ -27,16 +34,6 @@
     </div>
     <br />
     <button type="submit">Submit</button>
-
+   
 </form>
 
-<script>
-    function validateForm() {
-        const checkboxes = document.querySelectorAll('.topping-checkbox:checked');
-        if (checkboxes.length > 3) {
-            alert('You can select up to 3 toppings only.');
-            return false;
-        }
-        return true;
-    }
-</script>
