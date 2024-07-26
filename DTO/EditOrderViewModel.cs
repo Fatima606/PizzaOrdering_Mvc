@@ -2,11 +2,8 @@
 
 namespace PizzaOrdering_Mvc.DTO
 {
-    public class EditOrderViewModel
+    public class EditOrderViewModel: PizzaViewModel
     {
         public Guid PizzaId { get; set; }
-        public Guid PizzaSize { get; set; }
-        public Guid PizzaBase { get; set; }
-        public List<Guid> PizzaToppings { get; set; } = new List<Guid>();
     }
 }

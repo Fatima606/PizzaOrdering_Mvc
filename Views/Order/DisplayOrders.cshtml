@@ -1,11 +1,25 @@
 ﻿@model List<PizzaOrdering_Mvc.DTO.OrderViewModel>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
 @{
     var total_orders = 0;
     foreach (var or in Model)
     {
-        total_orders += or.no_of_times_ordered;
+        total_orders += or.NoTimesOrdered;
     }
 }
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 
 <p>TOTAL PIZZAS ORDERED : @total_orders</p>
 <table class="table">
@@ -33,7 +47,7 @@
                         }
                     </ul>
                 </td>
-                <td>@pizza.no_of_times_ordered</td>
+                <td>@pizza.NoTimesOrdered</td>
                 <td>
                     <form asp-action="EditOrders" method="get">
                         <input type="hidden" name="pizzaId" value="@pizza.PizzaId" />

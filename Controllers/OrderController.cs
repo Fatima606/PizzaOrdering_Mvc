@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PizzaOrdering_Mvc.DTO;
 using PizzaOrdering_Mvc.Models;
 using PizzaOrdering_Mvc.PizzaApp_DbContext;
+using System.Linq;
 
 namespace PizzaOrdering_Mvc.Controllers
 {
@@ -31,11 +32,10 @@ namespace PizzaOrdering_Mvc.Controllers
                         .Where(to => to.PizzaId == p.PizzaId)
                         .Select(to => to.Topping)
                         .ToList(),
-                        no_of_times_ordered = _pizzaAppDbContext.Order.Where(to => to.PizzaId == p.PizzaId).Count()
+                        NoTimesOrdered = _pizzaAppDbContext.Order.Where(to => to.PizzaId == p.PizzaId).Count()
                     };
 
                     orders.Add(OrderView);
-
 
                 }
                 return View(orders);
@@ -52,17 +52,27 @@ namespace PizzaOrdering_Mvc.Controllers
         {
             try
             {
-                var order = new Order
+                var pizza = _pizzaAppDbContext.Pizza.FirstOrDefault(p => p.PizzaId == pizzaId);
+                if (pizza != null)
                 {
-                    PizzaId = pizzaId
-                };
-                _pizzaAppDbContext.Order.Add(order);
-                _pizzaAppDbContext.SaveChanges();
-                return RedirectToAction("DisplayOrders");
+                    var order = new Order
+                    {
+                        PizzaId = pizzaId
+                    };
+                    _pizzaAppDbContext.Order.Add(order);
+                    _pizzaAppDbContext.SaveChanges();
+                    return RedirectToAction("DisplayOrders");
+                }
+                else
+                {
+                    TempData["ErrorMessage"]= "This Pizza does not exist.";
+                    return RedirectToAction("DisplayOrders");
+                }
+                
             }
             catch (Exception e)
             {
-                ViewBag.ErrorMessage = "No View found.";
+                ViewBag.ErrorMessage = "Order was not confirmed.";
                 return View();
             }
 
@@ -72,61 +82,102 @@ namespace PizzaOrdering_Mvc.Controllers
         {
             try
             {
-                ViewBag.Bases = _pizzaAppDbContext.Base.ToList();
-                ViewBag.Toppings = _pizzaAppDbContext.Toppings.ToList();
-                ViewBag.Sizes = _pizzaAppDbContext.Size.ToList();
-                var orderView = new EditOrderViewModel
+                var pizza = _pizzaAppDbContext.Pizza.FirstOrDefault(p => p.PizzaId == pizzaId);
+                if (pizza != null)
                 {
-                    PizzaId = pizzaId
-                };
-                return View(orderView);
+                    ViewBag.Bases = _pizzaAppDbContext.Base.ToList();
+                    ViewBag.Toppings = _pizzaAppDbContext.Toppings.ToList();
+                    ViewBag.Sizes = _pizzaAppDbContext.Size.ToList();
+                    var orderView = new EditOrderViewModel
+                    {
+                        PizzaId = pizzaId
+                    };
+                    return View(orderView);
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "Pizza was not found.";
+                    ViewBag.Bases = _pizzaAppDbContext.Base.ToList();
+                    ViewBag.Toppings = _pizzaAppDbContext.Toppings.ToList();
+                    ViewBag.Sizes = _pizzaAppDbContext.Size.ToList();
+                    var orderView = new EditOrderViewModel
+                    {
+                        PizzaId = pizzaId
+                    };
+                    return View(orderView);
+                }
+               
 
             }
             catch (Exception e)
             {
-                ViewBag.ErrorMessage = "No View found.";
-                return View();
+                TempData["ErrorMessage"] = "Pizza can not be editted due to some error.";
+                return RedirectToAction("DisplayOrders");
             }
 
         }
         [HttpPost]
-        public IActionResult EditOrders(EditOrderViewModel editted_order)
+        public IActionResult EditOrders(EditOrderViewModel edittedOrder)
         {
             try
             {
-                var e_order = _pizzaAppDbContext.Pizza.FirstOrDefault(eo => eo.PizzaId == editted_order.PizzaId);
-                if (e_order != null)
+                if (edittedOrder.ToppingIds.Count == 0 || edittedOrder.ToppingIds.Count > 3)
                 {
-                    e_order.SizeId = editted_order.PizzaSize;
-                    e_order.BaseId = editted_order.PizzaBase;
-                    _pizzaAppDbContext.Pizza.Update(e_order);
-                    _pizzaAppDbContext.SaveChanges();
-                }
-                var existingToppings = _pizzaAppDbContext.PizzaTopping
-                             .Where(to => to.PizzaId == editted_order.PizzaId)
-                             .ToList();
-                _pizzaAppDbContext.PizzaTopping.RemoveRange(existingToppings);
-                _pizzaAppDbContext.SaveChanges();
+                    ViewBag.ErrorMessage = "You can select up to 3 toppings only.";
 
-                var NewToppings = new List<PizzaTopping>();
-                foreach (var toppingId in editted_order.PizzaToppings)
+                    ViewBag.Bases = _pizzaAppDbContext.Base.ToList();
+                    ViewBag.Toppings = _pizzaAppDbContext.Toppings.ToList();
+                    ViewBag.Sizes = _pizzaAppDbContext.Size.ToList();
+
+                    return View(edittedOrder);
+                }
+                else
                 {
-                    var toppingsOrder = new PizzaTopping
+                    var EdittedOrder = _pizzaAppDbContext.Pizza.FirstOrDefault(eo => eo.PizzaId == edittedOrder.PizzaId);
+                    if (EdittedOrder != null)
                     {
-                        PizzaId = editted_order.PizzaId,
-                        ToppingId = toppingId
-                    };
-                    NewToppings.Add(toppingsOrder);
-                }
-                _pizzaAppDbContext.PizzaTopping.AddRange(NewToppings);
-                _pizzaAppDbContext.SaveChanges();
+                        EdittedOrder.SizeId = edittedOrder.SizeId;
+                        EdittedOrder.BaseId = edittedOrder.BaseId;
+                        _pizzaAppDbContext.Pizza.Update(EdittedOrder);
+                        _pizzaAppDbContext.SaveChanges();
 
-                return RedirectToAction("DisplayOrders");
+                        var existingToppings = _pizzaAppDbContext.PizzaTopping
+                                 .Where(to => to.PizzaId == edittedOrder.PizzaId).ToList();
+                        var sameToppings = existingToppings.Select(to=>to.ToppingId).Intersect(edittedOrder.ToppingIds).ToList();
+                        var ToppingsToRemove = existingToppings.Select(to => to.ToppingId).Except(sameToppings).ToList();
+                        var ToppingsToAdd = edittedOrder.ToppingIds.Except(sameToppings).ToList();
+
+
+                        var toppingsToRemoveEntities = existingToppings.Where(to => ToppingsToRemove.Contains(to.ToppingId)).ToList();
+                        _pizzaAppDbContext.PizzaTopping.RemoveRange(toppingsToRemoveEntities);
+                        _pizzaAppDbContext.SaveChanges();
+
+                        var NewToppings = new List<PizzaTopping>();
+                        foreach (var toppingId in ToppingsToAdd)
+                        {
+                            var toppingsOrder = new PizzaTopping
+                            {
+                                PizzaId = edittedOrder.PizzaId,
+                                ToppingId = toppingId
+                            };
+                            NewToppings.Add(toppingsOrder);
+                        }
+                        _pizzaAppDbContext.PizzaTopping.AddRange(NewToppings);
+                        _pizzaAppDbContext.SaveChanges();
+                        return RedirectToAction("DisplayOrders");
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Pizza was not found.";
+                        return RedirectToAction("DisplayOrders");
+                    }
+                }
+                
             }
             catch (Exception e)
             {
-                ViewBag.ErrorMessage = "No View found.";
-                return View();
+                TempData["ErrorMessage"]= "Pizza was not editted due to some errors.";
+                return RedirectToAction("DisplayOrders");
             }
 
         }
