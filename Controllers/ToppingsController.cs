@@ -20,7 +20,6 @@ namespace PizzaOrdering_Mvc.Controllers
 
                 List<Guid> AllToppings = new List<Guid>();
                 var Pizzas = _pizzaAppDbContext.Pizza.ToList();
-                var PizzaCount = _pizzaAppDbContext.Pizza.Count();
                 foreach(var pizza in Pizzas)
                 {
                     var PizzaToppings = _pizzaAppDbContext.PizzaTopping.Where(toppings => toppings.PizzaId == pizza.PizzaId).Select(toppings => toppings.ToppingId).ToList();
