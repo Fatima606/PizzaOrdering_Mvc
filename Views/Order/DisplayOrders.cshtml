@@ -1,0 +1,69 @@
+﻿@model List<PizzaOrdering_Mvc.DTO.OrderViewModel>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+@{
+    var total_orders = 0;
+    foreach (var or in Model)
+    {
+        total_orders += or.NoTimesOrdered;
+    }
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+
+<p>TOTAL PIZZAS ORDERED : @total_orders</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Pizza Size</th>
+            <th>Pizza Base</th>
+            <th>Toppings</th>
+            <th>Times ordered</th>
+            <th>Edit Pizza</th>
+            <th>Confirm Order</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pizza in Model)
+        {
+            <tr>
+                <td>@pizza.PizzaSize</td>
+                <td>@pizza.PizzaBase</td>
+                <td>
+                    <ul>
+                        @foreach (var topping in pizza.PizzaToppings)
+                        {
+                            <li>@topping.ToppingName</li>
+                        }
+                    </ul>
+                </td>
+                <td>@pizza.NoTimesOrdered</td>
+                <td>
+                    <form asp-action="EditOrders" method="get">
+                        <input type="hidden" name="pizzaId" value="@pizza.PizzaId" />
+                        <button type="submit">Edit</button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-action="ConfirmOrders" method="post">
+                        <input type="hidden" name="pizzaId" value="@pizza.PizzaId" />
+                        <button type="submit">Confirm</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+

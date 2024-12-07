@@ -1,15 +1,14 @@
-﻿@model PizzaOrdering_Mvc.DTO.PizzaViewModel
+﻿@model PizzaOrdering_Mvc.DTO.EditOrderViewModel
 
-<h1>Order Pizza</h1>
-
+<h1>Edit Pizza</h1>
 @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
 {
     <div class="alert alert-danger">
         @ViewBag.ErrorMessage
     </div>
 }
-
-<form asp-action="CreatePizza" method="post" onsubmit="return validateForm()">
+<form asp-action="EditOrders" method="post" onsubmit="return validateForm()">
+    <input type="hidden" asp-for="PizzaId" />
     <div>
         <label>Select Size</label>
         @Html.DropDownList("SizeId",new SelectList(ViewBag.Sizes,"SizeId","PizzaSize"))
@@ -34,6 +33,6 @@
     </div>
     <br />
     <button type="submit">Submit</button>
-   
+
 </form>
 
