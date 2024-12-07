@@ -1,0 +1,39 @@
+﻿@model PizzaOrdering_Mvc.DTO.PizzaViewModel
+
+<h1>Order Pizza</h1>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+<form asp-action="CreatePizza" method="post" onsubmit="return validateForm()">
+    <div>
+        <label>Select Size</label>
+        @Html.DropDownList("SizeId",new SelectList(ViewBag.Sizes,"SizeId","PizzaSize"))
+    </div>
+    <br />
+    <div>
+        <label>Select Base</label>
+        @Html.DropDownList("BaseId",new SelectList(ViewBag.Bases,"baseId","BaseName"))
+    </div>
+    <br />
+    <div>
+        <label>Select 3 Toppings</label>
+        <br />
+        @foreach (var topping in ViewBag.Toppings)
+        {
+            <div class="form-check">
+                <input type="checkbox" class="topping-checkbox" name="ToppingIds" value="@topping.ToppingId"
+                   @(Model.ToppingIds != null && Model.ToppingIds.Contains(topping.ToppingId) ? "checked" : "") />
+                <label>@topping.ToppingName</label>
+            </div>
+        }
+    </div>
+    <br />
+    <button type="submit">Submit</button>
+
+</form>
+
